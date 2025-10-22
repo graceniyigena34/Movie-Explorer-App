@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import MovieDetails from "../pages/MovieDetails";
-
+import SearchBar from "../components/SearchBar";
 
 const Api = () => {
   const [movies, setMovies] = useState([]);
- 
-
+  const [searchValue, setSearchValue] = useState("");
 
   const getMovieRequest = async () => {
     const url = "https://api.tvmaze.com/shows";
@@ -18,14 +17,25 @@ const Api = () => {
     getMovieRequest();
   }, []);
 
+  // Filter movies based on searchValue
+  const filteredMovies = movies.filter((movie) =>
+    movie.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
-    <div>
+    <div className="container-fluid">
+      <div className="row mb-4">
+        {/* Render SearchBar correctly with uppercase */}
+        <SearchBar value={searchValue} onChange={setSearchValue} />
+      </div>
+
       <div className="row">
-        <MovieDetails movies={movies} />
+        <MovieDetails movies={filteredMovies} />
       </div>
     </div>
   );
 };
 
 export default Api;
+
 

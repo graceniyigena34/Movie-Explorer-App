@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import MovieDetails from "./pages/MovieDetails";
 import Favorites from "./pages/Favorites";
 import Api from "./utils/api"; // ✅ now use it
+import SearchBar from "./components/SearchBar";
 
 export default function App() {
   return (
