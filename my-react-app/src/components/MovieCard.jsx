@@ -1,16 +1,7 @@
 import { Play, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
-interface MovieCardProps {
-  image: string;
-  title: string;
-  rating: string;
-  year: string;
-  className?: string;
-}
-
-const MovieCard = ({ image, title, rating, year, className }: MovieCardProps) => {
+const MovieCard = ({ image, title, rating, year, className }) => {
   return (
     <div className={cn("group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-[var(--shadow-glow)]", className)}>
       <div className="aspect-[2/3] overflow-hidden">
