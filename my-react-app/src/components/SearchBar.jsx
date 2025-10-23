@@ -10,7 +10,7 @@ export default function SearchBar({ value, onChange }) {
     p-3 
     mb-4 
     rounded-xl 
-    bg-slate-800 
+    bg-slate-700 
     text-white 
     placeholder-gray-400 
     shadow-md 
