@@ -1,47 +1,50 @@
-import React, { useState } from "react";
-import { useFetchMovies } from "../hooks/useFetchMovies";
-import MovieCard from "../components/MovieCard";
+import { useState, useMemo } from "react";
+import useFetchMovies from "../hooks/useFetchMovies";
+import useFavorites from "../hooks/useFavorites";
 import SearchBar from "../components/SearchBar";
+import CategoryFilter from "../components/CategoryFilter";
+import MovieCard from "../components/MovieCard";
 
-const Home = () => {
-  const { trendingMovies, popularMovies, loading, error } = useFetchMovies();
-  const [searchValue, setSearchValue] = useState("");
+export default function Home() {
+  const { movies, loading, error } = useFetchMovies();
+  const { favorites, toggleFavorite } = useFavorites();
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
 
-  if (loading) return <p>Loading movies...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const genres = useMemo(() => {
+    const set = new Set();
+    movies.forEach((m) => m.genres.forEach((g) => set.add(g)));
+    return Array.from(set);
+  }, [movies]);
 
-  // Filter movies based on search input
-  const filteredTrending = trendingMovies.filter((movie) =>
-    movie.name.toLowerCase().includes(searchValue.toLowerCase())
+  const filtered = movies.filter(
+    (m) =>
+      m.name.toLowerCase().includes(search.toLowerCase()) &&
+      (!category || m.genres.includes(category))
   );
 
-  const filteredPopular = popularMovies.filter((movie) =>
-    movie.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (error) return <p className="text-center mt-10 text-red-400">{error}</p>;
 
   return (
-    <div>
-      <h1>Movie Explorer</h1>
+    <div className="p-6">
+      <SearchBar value={search} onChange={setSearch} />
+      <CategoryFilter genres={genres} selected={category} onChange={setCategory} />
 
-      {/* Search bar */}
-      <SearchBar value={searchValue} onChange={setSearchValue} />
+      {filtered.length === 0 && <p className="text-center">No movies found.</p>}
 
-      <h2>Trending Movies</h2>
-      <div className="movie-list flex flex-wrap">
-        {filteredTrending.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-
-      <h2>Popular Movies</h2>
-      <div className="movie-list flex flex-wrap">
-        {filteredPopular.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-4">
+        {filtered.map((movie) => (
+          <MovieCard
+            key={movie.id}
+            movie={movie}
+            isFavorite={favorites.some((f) => f.id === movie.id)}
+            onToggleFavorite={toggleFavorite}
+          />
         ))}
       </div>
     </div>
   );
-};
+}
 
-export default Home;
 

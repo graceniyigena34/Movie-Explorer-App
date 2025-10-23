@@ -1,46 +1,28 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getAllMovies } from "../utils/api";
 
-// Custom hook to fetch movies
-export const useFetchMovies = () => {
-  const [trendingMovies, setTrendingMovies] = useState([]);
-  const [popularMovies, setPopularMovies] = useState([]);
+export default function useFetchMovies() {
+  const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Fetch trending movies
-  const getTrendingMovies = async () => {
-    try {
-      const res = await fetch("https://api.tvmaze.com/shows");
-      if (!res.ok) throw new Error("Failed to fetch trending movies");
-      const data = await res.json();
-      setTrendingMovies(data.slice(0, 12));
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  // Fetch popular movies (sorted by rating)
-  const getPopularMovies = async () => {
-    try {
-      const res = await fetch("https://api.tvmaze.com/shows");
-      if (!res.ok) throw new Error("Failed to fetch popular movies");
-      const data = await res.json();
-      const sorted = data.sort((a, b) => b.rating.average - a.rating.average);
-      setPopularMovies(sorted.slice(0, 12));
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await Promise.all([getTrendingMovies(), getPopularMovies()]);
-      setLoading(false);
-    };
-    fetchData();
+    async function fetchMovies() {
+      try {
+        const data = await getAllMovies();
+        console.log("Movies fetched:", data); 
+        setMovies(data);
+      } catch (err) {
+        console.log("Fetch error:", err);
+        setError("Failed to load movies");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMovies();
   }, []);
 
-  return { trendingMovies, popularMovies, loading, error };
-};
+  return { movies, loading, error };
+}
+
 

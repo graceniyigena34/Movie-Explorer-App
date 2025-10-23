@@ -1,13 +1,11 @@
-import React from 'react';
-
-const SearchBar = (props) => {
-    return (
-        <div className="col col-sm-4">
-            <input className='form-control' value={props.value}
-             onChange= {() =>props.setSearchValue()}
-             placeholder='Type to search'></input>
-        </div>
-    )
+export default function SearchBar({ value, onChange }) {
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder="Search movies..."
+      className="w-full p-2 mb-4 rounded-lg bg-slate-700 text-white focus:ring-2 focus:ring-accent outline-none"
+    />
+  );
 }
-
-export default SearchBar;
